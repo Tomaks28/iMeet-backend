@@ -1,0 +1,43 @@
+{
+  "name": "imeet-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc",
+    "start": "node dist/server.js",
+    "dev": "nodemon -x 'clear;ts-node' src/server.ts",
+    "postinstall": "npm run tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "@turf/turf": "^5.1.6",
+    "@typegoose/typegoose": "^7.0.0",
+    "axios": "^0.19.2",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "mongoose": "^5.9.10",
+    "uuid": "^7.0.2"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.7.0",
+    "@types/cors": "^2.8.6",
+    "@types/crypto-js": "^3.1.43",
+    "@types/express-formidable": "^1.0.4",
+    "@types/hapi__joi": "^16.0.12",
+    "@types/mongoose": "^5.7.6",
+    "@types/node": "^13.9.1",
+    "@types/uuid": "^7.0.0",
+    "nodemon": "^2.0.2",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
+  }
+}
