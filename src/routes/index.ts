@@ -1,2 +1,2 @@
-// export * from "./default.route";
-export { defaultRoute } from "./default.route";
+export * from "./user.route";
+export * from "./default.route";

@@ -2,6 +2,7 @@ import { connect } from "mongoose";
 
 const dbConnect = () => {
   if (!process.env.MONGODB_URI) {
+    // Can be simulated at "//localhost/imeet" fro example
     throw Error("[ENV] Missing process.env.MONGODB_URI");
   }
 

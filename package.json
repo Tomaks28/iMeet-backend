@@ -17,6 +17,9 @@
     "@hapi/joi": "^17.1.1",
     "@turf/turf": "^5.1.6",
     "@typegoose/typegoose": "^7.0.0",
+    "@types/nodemailer": "^6.4.0",
+    "@types/validator": "^13.0.0",
+    "@types/ws": "^7.2.4",
     "axios": "^0.19.2",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
@@ -25,7 +28,10 @@
     "express": "^4.17.1",
     "express-formidable": "^1.2.0",
     "mongoose": "^5.9.10",
-    "uuid": "^7.0.2"
+    "nodemailer": "^6.4.6",
+    "uuid": "^7.0.2",
+    "validator": "^13.0.0",
+    "ws": "^7.3.0"
   },
   "devDependencies": {
     "@types/compression": "^1.7.0",
