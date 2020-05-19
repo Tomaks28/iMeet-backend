@@ -18,47 +18,67 @@ router.get("/users", async (req, res) => {
 
 // Endpoint de récupération d'un'utilisateur
 router.get("/user", Bearer, async (req: Request | any, res) => {
-  // router.get("/user/:id", async (req, res) => {
-  // const id = req.params.id;
-  const user = await UserModel.findOne({ token: req.token });
-  if (user) {
-    return res.json({
-      username: user.username,
-      email: user.email,
-      token: user.token,
-    });
+  try {
+    const user = await UserModel.findOne({ token: req.token });
+    if (user) {
+      return res.json({
+        username: user.username,
+        email: user.email,
+        token: user.token,
+        validated: user.validated,
+      });
+    }
+    return res.status(400).json({ message: "[User] Not exists" });
+  } catch (err) {
+    return res.status(500).json({ message: "[User] Server getUser error" });
   }
-  return res.status(400).json({ message: "[User] Not exists" });
 });
 
 // endpoint d'inscription d'un utilisateur
 router.post("/user/signup", SignUpValidator, async (req: any, res: any) => {
-  const user = await UserModel.findOne({ email: req.fields.email });
-  if (user) {
-    return res.status(400).json({ message: "[User] Already exists" });
-  }
-  const token = uuid();
-  const salt = uuid();
-  const hash = SHA256(req.fields.password + salt);
   try {
-    const user = await UserModel.create({
+    const user = await UserModel.findOne({ email: req.fields.email });
+    if (user) {
+      return res.status(400).json({ message: "[User] Already exists" });
+    }
+    const token = uuid();
+    const salt = uuid();
+    const hash = SHA256(req.fields.password + salt);
+    const newUser = await UserModel.create({
       username: req.fields.username,
       email: req.fields.email,
       creationDate: new Date(),
       token,
       salt,
       hash,
+      validated: false,
     });
-    return res.json({
-      _id: user._id,
-      token: user.token,
-    });
+    return res.json({ _id: newUser._id });
   } catch (err) {
-    return res.status(400).json({ message: "An error occurred" });
+    return res.status(500).json({ message: "[User] Serveur signup error" });
   }
 });
 
-// endpoint de connexion d'un utilisateur
+// Endpoint de validation du compte utilisateur
+router.get("/user/validation/:token", async (req, res) => {
+  try {
+    const { token } = req.params;
+    if (token) {
+      const user = await UserModel.findOne({ token });
+      if (user) {
+        user.validated = true;
+        await user.save();
+        res.send({ message: "[User] User account validated" });
+      }
+    } else {
+      res.status(400).send({ message: "[User] Failed to validate account" });
+    }
+  } catch (err) {
+    res.status(500).send({ error: "[User] Server account validation error" });
+  }
+});
+
+// Endpoint de connexion d'un utilisateur
 router.post("/user/signin", SignInValidator, async (req: any, res: any) => {
   try {
     const user = await UserModel.findOne({ email: req.fields.email });
@@ -77,7 +97,7 @@ router.post("/user/signin", SignInValidator, async (req: any, res: any) => {
       username: user.username,
     });
   } catch (err) {
-    console.log("bad request");
+    res.status(500).send({ error: "[User] Server signin error" });
   }
 });
 
@@ -96,7 +116,6 @@ router.post("/user/reset", async (req: any, res: any) => {
             pass: process.env.NODEMAILER_PASSWORD,
           },
         });
-
         // Options d'email
         var mailOptions = {
           from: process.env.NODEMAILER_EMAIL,
