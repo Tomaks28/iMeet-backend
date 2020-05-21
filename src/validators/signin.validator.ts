@@ -16,7 +16,9 @@ export const SignInValidator = async (
     }
     res
       .status(400)
-      .send({ message: "[email, password] fields are required !" });
+      .send({
+        message: "[email, mot de passe] Ces champs sont obligatoires !",
+      });
   } catch (err) {
     console.log("error");
   }

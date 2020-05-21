@@ -14,10 +14,12 @@ export const SignUpValidator = async (
         return;
       }
     }
-    res
-      .status(400)
-      .send({ message: "[email, password, username] fields are required !" });
+    res.status(400).send({
+      message:
+        "[email, mot de passe, nom d'utilisateur] ces champs sont obligatoires !",
+    });
   } catch (err) {
     console.log(err);
+    res.status(500).send({ message: "SignUpValidator Error" });
   }
 };

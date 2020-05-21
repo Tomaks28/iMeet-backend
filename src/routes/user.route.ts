@@ -2,10 +2,9 @@ import { SHA256 } from "crypto-js";
 import { Router } from "express";
 import { v4 as uuid } from "uuid";
 import validator from "validator";
-import nodemailer from "nodemailer";
 import { SignInValidator, SignUpValidator, Bearer } from "../validators";
 import { UserModel } from "../models";
-import { resetEmailHtml } from "../email";
+import { sendResetEmail, sendConfirmationEmail } from "../email";
 
 const router = Router();
 
@@ -36,11 +35,14 @@ router.get("/user", Bearer, async (req: Request | any, res) => {
 
 // endpoint d'inscription d'un utilisateur
 router.post("/user/signup", SignUpValidator, async (req: any, res: any) => {
+  // console.log("here");
   try {
+    // Check if user already exists in db
     const user = await UserModel.findOne({ email: req.fields.email });
     if (user) {
-      return res.status(400).json({ message: "[User] Already exists" });
+      return res.status(400).send({ message: "Cet utilisateur existe déjà !" });
     }
+    // Crypting password and storing in db
     const token = uuid();
     const salt = uuid();
     const hash = SHA256(req.fields.password + salt);
@@ -53,9 +55,21 @@ router.post("/user/signup", SignUpValidator, async (req: any, res: any) => {
       hash,
       validated: false,
     });
-    return res.json({ _id: newUser._id });
+    // Sending confirmation email
+    sendConfirmationEmail(
+      req.fields.email,
+      process.env.SERVER_URL + "/user/validation/" + token,
+      req.fields.username,
+      process.env.BACKOFFICE_URL + ""
+    );
+    // Reply to client with data
+    return res.send({
+      username: newUser.username,
+      token: newUser.token,
+      email: newUser.email,
+    });
   } catch (err) {
-    return res.status(500).json({ message: "[User] Serveur signup error" });
+    return res.status(500).send({ message: "[User] Serveur signup error" });
   }
 });
 
@@ -83,18 +97,20 @@ router.post("/user/signin", SignInValidator, async (req: any, res: any) => {
   try {
     const user = await UserModel.findOne({ email: req.fields.email });
     if (!user) {
-      return res.status(400).json({ message: "[User] Not found" });
+      return res.status(400).send({ message: "Cet utilisateur n'existe pas!" });
     }
-
+    // Check if user password is the same than database
     const authorize =
       SHA256(req.fields.password + user.salt).toString() === user.hash;
     if (!authorize) {
-      return res.status(400).json({ message: "[User] Unauthorized" });
+      return res.status(400).send({ message: "Mot de passe incorrect" });
     }
-    return res.json({
+    // Sending reply to client
+    return res.send({
       _id: user._id,
       token: user.token,
       username: user.username,
+      email: user.email,
     });
   } catch (err) {
     res.status(500).send({ error: "[User] Server signin error" });
@@ -108,34 +124,11 @@ router.post("/user/reset", async (req: any, res: any) => {
     if (validator.isEmail(email)) {
       const user = await UserModel.findOne({ email });
       if (user) {
-        // Création du transporteur de mail
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.NODEMAILER_EMAIL,
-            pass: process.env.NODEMAILER_PASSWORD,
-          },
-        });
-        // Options d'email
-        var mailOptions = {
-          from: process.env.NODEMAILER_EMAIL,
-          to: email,
-          subject: "Mot de passe oublié",
-          // text: "That was easy!",
-          html: resetEmailHtml(),
-        };
-        // Envoi du mail
-        // **NOTE** Pour envoyer des mails. Allez dans google et autoriser 'Accès moins sécurisé des applications'
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log("Email sent: " + info.response);
-          }
-        });
-        res.send({ message: "mail sent" });
+        sendResetEmail(email);
+
+        res.send({ message: "Nous vous avons envoyé un email." });
       } else {
-        res.status(400).send({ message: "[User] User not exists" });
+        res.status(400).send({ message: "L'utilisateur n'existe pas" });
       }
     }
   }

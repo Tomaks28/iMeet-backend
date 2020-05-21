@@ -1,5 +1,5 @@
 // export const resetEmailHtml = (logo: string) => {
-export const resetEmailHtml = () => {
+export const resetHtml = () => {
   return `
   <html>
       <head>
