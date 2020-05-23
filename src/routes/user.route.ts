@@ -20,16 +20,11 @@ router.get("/user", Bearer, async (req: Request | any, res) => {
   try {
     const user = await UserModel.findOne({ token: req.token });
     if (user) {
-      return res.json({
-        username: user.username,
-        email: user.email,
-        token: user.token,
-        validated: user.validated,
-      });
+      return res.send(user);
     }
-    return res.status(400).json({ message: "[User] Not exists" });
+    return res.status(400).send({ message: "L'utilisateur n'existe pas!" });
   } catch (err) {
-    return res.status(500).json({ message: "[User] Server getUser error" });
+    return res.status(500).send({ message: "getUser Server error" });
   }
 });
 

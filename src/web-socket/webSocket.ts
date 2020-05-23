@@ -1,4 +1,14 @@
 import WebSocket from "ws";
+import { UserModel } from "../models";
+import { response } from "express";
+
+interface IResponse {
+  token: string;
+  type: string;
+  payload: {
+    lastUpdate?: number | Date;
+  };
+}
 
 const socketList: Array<string> = [];
 const blockList: Array<string> = [
@@ -54,7 +64,7 @@ const realTimeManager = () => {
       console.log(`WebSocket started at ` + process.env.WEBSOCKET_PORT);
     }
   );
-  wss.on("connection", (ws: any) => {
+  wss.on("connection", async (ws: any) => {
     // Middleware to check if connection is authorized
     // if (blocked(ws)) {
     //   ws.send(JSON.stringify({ message: "Blocked" }));
@@ -66,9 +76,27 @@ const realTimeManager = () => {
     // }
     // addSocketToList(ws._socket.remoteAddress); //TODO
     addSocketToList(ws._socket.remoteAddress);
-    ws.on("message", (message: string) => {
-      console.log(message);
-      ws.send(JSON.stringify({ message: "got it" }));
+    ws.on("message", async (message: IResponse) => {
+      // Checking if token exists
+      if (message.token) {
+        // Checking if user is in db and valid
+        const user = await UserModel.findOne({ token: message.token });
+        if (user) {
+          // Managing state machine
+          switch (message.type) {
+            case "GET_MESSAGES":
+              const messages = await UserModel.findOne({
+                token: message.token,
+              });
+
+              break;
+            default:
+              ws.close();
+              break;
+          }
+        }
+      }
+      // ws.send(JSON.stringify({ message: "got it" }));
     });
     ws.on("close", () => {
       //   removeSocketfromList(ws._socket.remoteAddress);

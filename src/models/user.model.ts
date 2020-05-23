@@ -1,23 +1,3 @@
-// import { getModelForClass, prop } from "@typegoose/typegoose";
-
-// class User {
-//   @prop()
-//   username!: string;
-//   @prop()
-//   email!: string;
-//   @prop()
-//   creationDate!: Date;
-//   @prop()
-//   salt!: string;
-//   @prop()
-//   hash!: string;
-//   @prop()
-//   token!: string;
-//   @prop()
-//   validated!: boolean;
-// }
-
-// export const UserModel = getModelForClass(User);
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUser extends Document {
@@ -28,6 +8,10 @@ export interface IUser extends Document {
   hash: string;
   token: string;
   validated: boolean;
+  online: boolean;
+  lastConnexion: Date;
+  gender: "MALE" | "FEMALE";
+  pictures: Array<string>;
 }
 
 const UserSchema: Schema = new Schema({
@@ -38,6 +22,10 @@ const UserSchema: Schema = new Schema({
   hash: { type: String, required: true },
   token: { type: String, required: true },
   validated: { type: Boolean },
+  online: { type: Boolean },
+  lastConnexion: { type: Date },
+  gender: { type: String },
+  pictures: { type: [String] },
 });
 
 const UserModel = mongoose.model<IUser>("User", UserSchema);

@@ -5,7 +5,7 @@ import express, { Request, Response, NextFunction } from "express";
 import expressFormidable from "express-formidable";
 import { realTimeManager } from "./web-socket";
 import { dbConnect } from "./db";
-import { userRoutes, defaultRoute } from "./routes";
+import { userRoutes, messageRoutes, defaultRoute } from "./routes";
 
 // Import des variables d'environnement du fichier .env
 dotenv.config();
@@ -26,6 +26,7 @@ dotenv.config();
 
   // Appel des différents endpoint du serveur
   app.use(userRoutes);
+  app.use(messageRoutes);
   app.use(defaultRoute);
 
   // Démarrage du serveur

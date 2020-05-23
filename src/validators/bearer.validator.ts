@@ -15,7 +15,7 @@ export const Bearer = async (
       return;
     }
   } else {
-    res.status(401).json({
+    res.status(401).send({
       error: "Invalid Token",
     });
   }
