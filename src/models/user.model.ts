@@ -4,8 +4,8 @@ export interface IUser extends Document {
   email: string;
   username: string;
   creationDate: Date;
-  salt: string;
-  hash: string;
+  salt: string | undefined;
+  hash: string | undefined;
   token: string;
   validated: boolean;
   online: boolean;
