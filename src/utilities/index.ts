@@ -1,1 +1,1 @@
-export * from "./removeUserPasswordInfo";
+export * from "./returnUserPictures";

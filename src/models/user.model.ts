@@ -11,7 +11,8 @@ export interface IUser extends Document {
   online: boolean;
   lastConnexion: Date;
   gender: "MALE" | "FEMALE";
-  pictures: Array<string>;
+  // pictures: Array<string>;
+  pictures: Array<{ url: string; public_id: string }>;
 }
 
 const UserSchema: Schema = new Schema({
@@ -25,7 +26,8 @@ const UserSchema: Schema = new Schema({
   online: { type: Boolean },
   lastConnexion: { type: Date },
   gender: { type: String },
-  pictures: { type: [String] },
+  // pictures: { type: [String] },
+  pictures: [{ url: String, public_id: String }],
 });
 
 const UserModel = mongoose.model<IUser>("User", UserSchema);
