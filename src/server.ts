@@ -8,8 +8,9 @@ import { dbConnect } from "./db";
 import {
   userRoutes,
   messageRoutes,
+  discoverRoutes,
+  cloudinaryRoutes,
   defaultRoute,
-  CloudinaryRoutes,
 } from "./routes";
 
 // Import des variables d'environnement du fichier .env
@@ -32,7 +33,8 @@ dotenv.config();
   // Appel des différents endpoint du serveur
   app.use(userRoutes);
   app.use(messageRoutes);
-  app.use(CloudinaryRoutes);
+  app.use(discoverRoutes);
+  app.use(cloudinaryRoutes);
   app.use(defaultRoute);
 
   // Démarrage du serveur

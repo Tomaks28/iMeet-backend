@@ -83,4 +83,4 @@ router.post("/cloudinary/delete", Bearer, async (req: Request | any, res) => {
   }
 });
 
-export const CloudinaryRoutes = router;
+export const cloudinaryRoutes = router;
