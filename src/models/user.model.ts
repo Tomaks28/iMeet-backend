@@ -1,5 +1,10 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+export interface IMatch extends Document {
+  id: Schema.Types.ObjectId;
+  reaction: Boolean;
+}
+
 export interface IUser extends Document {
   email: string;
   username: string;
@@ -12,6 +17,9 @@ export interface IUser extends Document {
   lastConnexion: Date;
   gender: "MALE" | "FEMALE";
   pictures: Array<{ url: string; public_id: string }>;
+  likes: Array<IMatch>;
+  dislikes: Array<IMatch>;
+  matchRequests: Array<IMatch>;
 }
 
 const UserSchema: Schema = new Schema({
@@ -26,8 +34,9 @@ const UserSchema: Schema = new Schema({
   lastConnexion: { type: Date },
   gender: { type: String },
   pictures: [{ url: String, public_id: String }],
+  likes: [{ id: Schema.Types.ObjectId, reaction: Boolean }],
+  dislikes: [{ id: Schema.Types.ObjectId, reaction: Boolean }],
+  matchRequests: [{ id: Schema.Types.ObjectId, reaction: Boolean }],
 });
 
-const UserModel = mongoose.model<IUser>("User", UserSchema);
-
-export { UserModel };
+export const UserModel = mongoose.model<IUser>("User", UserSchema);

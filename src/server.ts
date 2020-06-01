@@ -9,6 +9,7 @@ import {
   userRoutes,
   messageRoutes,
   discoverRoutes,
+  matchRoutes,
   cloudinaryRoutes,
   defaultRoute,
 } from "./routes";
@@ -34,6 +35,7 @@ dotenv.config();
   app.use(userRoutes);
   app.use(messageRoutes);
   app.use(discoverRoutes);
+  app.use(matchRoutes);
   app.use(cloudinaryRoutes);
   app.use(defaultRoute);
 
