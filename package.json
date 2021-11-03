@@ -30,7 +30,7 @@
     "mongoose": "^5.9.10",
     "nodemailer": "^6.4.16",
     "uuid": "^7.0.2",
-    "validator": "^13.0.0",
+    "validator": "^13.7.0",
     "ws": "^7.3.0"
   },
   "devDependencies": {
